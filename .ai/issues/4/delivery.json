@@ -1,0 +1,10 @@
+{
+  "issue_number": 4,
+  "branch": "ai/issue-4",
+  "base_sha": "f3ebf7e3d0445d288b3ec7827eee1e05c4536b7e",
+  "checks": "passed",
+  "ci": "pending",
+  "preview": "not verifiable",
+  "delivery_sha_location": "PR description",
+  "pr_lookup": "head ai/issue-4"
+}

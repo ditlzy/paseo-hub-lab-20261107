@@ -1,5 +1,5 @@
-/** @param {string} name */
-export function greeting(name) {
+/** @param {string} [name] */
+export function greeting(name = '') {
   const trimmed = name.trim();
   return `Hello, ${trimmed || 'world'}!`;
 }
