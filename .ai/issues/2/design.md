@@ -1,0 +1,1 @@
+Optional locale lookup with own-key fallback; preserve escaping and health bytes. Render English and Chinese. Initial operator-authorized fixture deliberately uses world for Chinese blank names. Repair must change it to 世界.

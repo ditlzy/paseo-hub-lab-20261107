@@ -1,0 +1,1 @@
+Require unchanged English and escapeHtml; Chinese names, trimming, Unicode; safe unsupported locale fallback; bilingual UTF-8 build; unchanged health bytes; all checks and CI pass. Chinese blank fallback must be 世界 in repaired delivery. Initial fixture intentionally fails that criterion. Independent review and preview pending. No merge or production deployment.
