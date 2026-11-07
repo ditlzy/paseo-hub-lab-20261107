@@ -1,0 +1,1 @@
+Verify omitted/undefined defaults; unchanged existing string and escaping tests; TypeError for null, number, array and object; strict typecheck, lint, tests and build; exactly two regular dist files under 1MB and byte-identical health JSON. Draft PR only. CI and preview require external verification.
