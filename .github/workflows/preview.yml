@@ -1,0 +1,79 @@
+name: Preview
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+  deployments: write
+concurrency:
+  group: preview-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+jobs:
+  preview:
+    if: >-
+      vars.PREVIEW_ENABLED == 'true' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.id == github.repository_id
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: preview
+    steps:
+      # No checkout, npm build, or execution of code from the PR in this job.
+      - name: Resolve an open same-repository PR at this exact head
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -eu
+          gh api "repos/$REPO/commits/$HEAD_SHA/pulls" > /tmp/prs.json
+          NUMBER=$(jq -r --arg sha "$HEAD_SHA" --arg repo "$REPO" '[.[] | select(.state == "open" and .head.sha == $sha and .head.repo.full_name == $repo)] | if length == 1 then .[0].number else error("Expected exactly one open internal PR at the CI head") end' /tmp/prs.json)
+          echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: site-${{ github.event.workflow_run.head_sha }}
+          path: dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Validate the static artifact without executing it
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root = Path('dist')
+          files = [p for p in root.rglob('*') if p.is_file()]
+          assert {p.relative_to(root).as_posix() for p in files} == {'index.html', 'health.json'}
+          assert not any(p.is_symlink() for p in root.rglob('*'))
+          assert sum(p.stat().st_size for p in files) < 1_000_000
+          assert json.loads((root/'health.json').read_text()) == {'ok': True, 'project': 'paseo-hub-lab-20261107'}
+          PY
+      - name: Deploy isolated preview
+        id: deploy
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=paseo-hub-lab-20261107 --branch=pr-${{ steps.pr.outputs.number }} --commit-hash=${{ github.event.workflow_run.head_sha }}
+      - name: Check preview health and publish exact-SHA deployment evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PR: ${{ steps.pr.outputs.number }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.deployment-url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -eu
+          case "$PREVIEW_URL" in https://*.paseo-hub-lab-20261107.pages.dev) ;; *) echo 'Unexpected preview origin' >&2; exit 1;; esac
+          curl --fail --silent --show-error --retry 6 --retry-delay 5 "$PREVIEW_URL/health.json" | jq -e '.ok == true and .project == "paseo-hub-lab-20261107"'
+          LIVE_SHA=$(gh api "repos/$REPO/pulls/$PR" --jq .head.sha)
+          test "$LIVE_SHA" = "$HEAD_SHA"
+          jq -n --arg ref "$HEAD_SHA" --arg environment "preview-pr-$PR" '{ref:$ref,environment:$environment,auto_merge:false,transient_environment:true,production_environment:false,required_contexts:[]}' > /tmp/deployment.json
+          ID=$(gh api --method POST "repos/$REPO/deployments" --input /tmp/deployment.json --jq .id)
+          gh api --method POST "repos/$REPO/deployments/$ID/statuses" -f state=success -f environment_url="$PREVIEW_URL" -f log_url="$RUN_URL"
+          printf 'Preview: %s\nCommit: %s\n' "$PREVIEW_URL" "$HEAD_SHA" >> "$GITHUB_STEP_SUMMARY"

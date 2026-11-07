@@ -1,0 +1,22 @@
+{
+  "name": "paseo-hub-lab-20261107",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src test scripts",
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.js",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.2",
+    "eslint": "10.14.0",
+    "typescript": "7.0.2"
+  },
+  "overrides": {
+    "minimatch": "^11.0.1"
+  }
+}

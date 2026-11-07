@@ -1,0 +1,4 @@
+# Workflow and policy changes require the human owner.
+/.github/ @ditlzy
+/.paseo/ @ditlzy
+/agents/ @ditlzy
