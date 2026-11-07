@@ -1,0 +1,16 @@
+{
+  "issue_number": 6,
+  "base_sha": "f3ebf7e3d0445d288b3ec7827eee1e05c4536b7e",
+  "branch": "ai/issue-6",
+  "checks": {
+    "npm ci --ignore-scripts": 0,
+    "npm run check": 0
+  },
+  "final_sha_source": "PR head; recorded in PR description after commit",
+  "pending": [
+    "independent review",
+    "CI",
+    "preview health",
+    "Hub delivery report"
+  ]
+}
