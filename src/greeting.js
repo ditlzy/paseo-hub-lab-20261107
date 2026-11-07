@@ -6,7 +6,7 @@ export function greeting(name, locale = 'en') {
   const trimmed = name.trim();
   const messages = {
     en: { prefix: 'Hello, ', fallback: 'world', suffix: '!' },
-    zh: { prefix: '你好，', fallback: 'world', suffix: '！' },
+    zh: { prefix: '你好，', fallback: '世界', suffix: '！' },
   };
   const key = Object.hasOwn(messages, locale) ? locale : 'en';
   const message = messages[/** @type {keyof typeof messages} */ (key)];

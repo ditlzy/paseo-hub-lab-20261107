@@ -26,3 +26,8 @@ test('falls back to English for unsupported locales', () => {
     assert.equal(greeting(' ', locale), 'Hello, world!');
   }
 });
+
+test('uses the Chinese fallback for blank and whitespace-only names', () => {
+  assert.equal(greeting('', 'zh'), '你好，世界！');
+  assert.equal(greeting('  \n\t', 'zh'), '你好，世界！');
+});
