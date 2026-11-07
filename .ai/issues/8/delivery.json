@@ -1,0 +1,64 @@
+{
+  "repo": "ditlzy/paseo-hub-lab-20261107",
+  "issue_number": 8,
+  "claim_owner": "b83175c0-9bc6-41f2-ab67-f326480d67f1",
+  "base_sha": "f3ebf7e3d0445d288b3ec7827eee1e05c4536b7e",
+  "base_verification": {
+    "git_ls_remote_main": "f3ebf7e3d0445d288b3ec7827eee1e05c4536b7e",
+    "github_branch_main": "f3ebf7e3d0445d288b3ec7827eee1e05c4536b7e",
+    "local_origin_main": "f3ebf7e3d0445d288b3ec7827eee1e05c4536b7e"
+  },
+  "worktree": "Hub-provisioned independent native worktree, initially clean at verified origin/main",
+  "local_branch": "hub-7c98cf7c-3c6c-59d8-983d-a9c6495d17c1",
+  "branch": "ai/issue-8",
+  "node_version": "v24.13.1",
+  "checks": [
+    {
+      "argv": [
+        "npm",
+        "ci",
+        "--ignore-scripts"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "initial_check": {
+    "exit_code": 1,
+    "repaired": "Explicitly imported URL for eslint no-undef; full check subsequently passed"
+  },
+  "mutation_checks": [
+    {
+      "variant": "missing",
+      "exit_code": 1,
+      "expected": "failure"
+    },
+    {
+      "variant": "duplicated",
+      "exit_code": 1,
+      "expected": "failure"
+    },
+    {
+      "variant": "outside-main",
+      "exit_code": 1,
+      "expected": "failure"
+    }
+  ],
+  "artifacts": [
+    "design.md",
+    "acceptance.md",
+    "test-results.md",
+    "delivery.json"
+  ],
+  "commit_reference": "The commit containing this delivery.json; exact pushed SHA is recorded in the PR body and hub.finish_execution output (a commit cannot embed its own SHA).",
+  "handoff": "Draft PR for independent review; no merge, review approval, CI or preview success asserted",
+  "pr_reference": "Refs #8",
+  "observed_at": "2026-11-07T10:05:15.687302+00:00"
+}
