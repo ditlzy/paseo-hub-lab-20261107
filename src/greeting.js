@@ -1,7 +1,16 @@
-/** @param {string} name */
-export function greeting(name) {
+/**
+ * @param {string} name
+ * @param {string} [locale]
+ */
+export function greeting(name, locale = 'en') {
   const trimmed = name.trim();
-  return `Hello, ${trimmed || 'world'}!`;
+  const messages = {
+    en: { prefix: 'Hello, ', fallback: 'world', suffix: '!' },
+    zh: { prefix: '你好，', fallback: '世界', suffix: '！' },
+  };
+  const key = Object.hasOwn(messages, locale) ? locale : 'en';
+  const message = messages[/** @type {keyof typeof messages} */ (key)];
+  return `${message.prefix}${trimmed || message.fallback}${message.suffix}`;
 }
 
 /** @param {string} value */

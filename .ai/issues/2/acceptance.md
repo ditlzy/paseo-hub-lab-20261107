@@ -1,0 +1,1 @@
+Local acceptance passed: English behavior, Chinese names and blank names, trimming, Unicode, safe unsupported locale fallback, unchanged escaping, bilingual UTF-8 output and exact health bytes. Independent review, CI and preview remain external checks. PR stays draft; no merge or production deployment.
